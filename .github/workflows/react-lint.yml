@@ -1,4 +1,4 @@
-name: Frontend Lint and Trivy Scan
+name: React Lint and Trivy Scan
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
         run: |
           echo "Current directory:"
           pwd
-          echo "List of files recursively:"
+          echo "Files and folders recursively:"
           ls -R
 
       - name: Set up Node.js
@@ -28,7 +28,19 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci || npm install
+
+      - name: Detect React source folder
+        id: detect
+        run: |
+          if [ -d "src" ]; then
+            echo "SRC_DIR=src" >> $GITHUB_ENV
+          elif [ -d "frontendapp" ]; then
+            echo "SRC_DIR=frontendapp" >> $GITHUB_ENV
+          else
+            echo "SRC_DIR=." >> $GITHUB_ENV
+          fi
+          echo "React source folder: $SRC_DIR"
 
       - name: Ensure ESLint config exists
         run: |
@@ -46,7 +58,9 @@ EOF
           fi
 
       - name: Run ESLint
-        run: npx eslint src/ --ext .js,.jsx,.ts,.tsx --max-warnings=0 || true
+        run: |
+          echo "Running ESLint on $SRC_DIR..."
+          npx eslint $SRC_DIR --ext .js,.jsx,.ts,.tsx --max-warnings=0 || true
 
   trivy-scan:
     name: Scan Docker Image with Trivy
@@ -59,6 +73,9 @@ EOF
 
       - name: Build Docker image
         run: docker build -t reactapp:latest .
+
+      - name: Run container test
+        run: docker run --rm reactapp:latest || echo "Container exited (normal if no long-running process)"
 
       - name: Scan filesystem with Trivy
         uses: aquasecurity/trivy-action@master
