@@ -2,9 +2,9 @@ name: React Lint and Trivy Scan
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   lint:
@@ -89,4 +89,13 @@ EOF
       - name: Convert Trivy JSON report to HTML
         run: |
           echo "<html><body><pre>" > trivy-report.html
-          cat trivy-report.json | jq '.' >> trivy-report
+          cat trivy-report.json | jq '.' >> trivy-report.html
+          echo "</pre></body></html>" >> trivy-report.html
+
+      - name: Upload Trivy reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-reports
+          path: |
+            trivy-report.json
+            trivy-report.html
