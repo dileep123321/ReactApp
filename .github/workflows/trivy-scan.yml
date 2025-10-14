@@ -1,13 +1,14 @@
-name: Scan Docker Image with Trivy
+name: Trivy Docker Scan
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["Python Linting"]   # name of the lint workflow
+    types:
+      - completed                  # triggers when lint workflow finishes
 
 jobs:
   trivy-scan:
+    name: Scan Docker Image with Trivy
     runs-on: ubuntu-latest
 
     steps:
