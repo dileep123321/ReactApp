@@ -1,42 +1,42 @@
-name: Trivy Docker Scan
+name: Scan the Trivy for Docker image
 
 on:
-  workflow_run:
-    workflows: ["Python Linting"]   # name of the lint workflow
-    types:
-      - completed                  # triggers when lint workflow finishes
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   trivy-scan:
-    name: Scan Docker Image with Trivy
+    name: Trivy Scan Workflow
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t reactapp:latest .
+      - name: Install Trivy on Linux machine
+        run: |
+          sudo apt update -y && sudo apt upgrade -y
+          sudo apt-get install wget -y
+          wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh
+          sudo bash install.sh
+          trivy --version
 
-      - name: Scan filesystem with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: fs
-          scan-path: .
-          format: table
-          exit-code: 0
-          ignore-unfixed: true
+      - name: Scan the file system (fs)
+        run: |
+          trivy fs .
 
-      - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: reactapp:latest
-          format: json
-          exit-code: 0
-          ignore-unfixed: true
+      - name: Build the Docker image
+        run: |
+          docker build -t reactapp:latest .
 
-      - name: Upload Trivy report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-report
-          path: trivy-report.json
+      - name: Scan the Docker image
+        run: |
+          mkdir -p reports
+          trivy image --format json -o "./reports/app_scan_report.json" reactapp:latest
+
+
+
+
+
