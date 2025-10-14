@@ -5,14 +5,14 @@
 4 silly config load:file:C:\Practice\REACTAPP\.npmrc
 5 silly config load:file:C:\Users\pmdin\.npmrc
 6 silly config load:file:C:\Users\pmdin\AppData\Roaming\npm\etc\npmrc
-7 verbose title npm exec eslint src/**/*.js
-8 verbose argv "exec" "--" "eslint" "src/**/*.js"
-9 verbose logfile logs-max:10 dir:C:\Practice\REACTAPP\UserspmdinAppDataRoamingnpm\_logs\2025-10-03T05_53_45_790Z-
-10 verbose logfile C:\Practice\REACTAPP\UserspmdinAppDataRoamingnpm\_logs\2025-10-03T05_53_45_790Z-debug-0.log
+7 verbose title npm exec eslint src/ --ext .js,.jsx,.ts,.tsx
+8 verbose argv "exec" "--" "eslint" "src/" "--ext" ".js,.jsx,.ts,.tsx"
+9 verbose logfile logs-max:10 dir:C:\Practice\REACTAPP\UserspmdinAppDataRoamingnpm\_logs\2025-10-14T07_41_56_873Z-
+10 verbose logfile C:\Practice\REACTAPP\UserspmdinAppDataRoamingnpm\_logs\2025-10-14T07_41_56_873Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files
 13 verbose cwd C:\Practice\REACTAPP
-14 verbose os Windows_NT 10.0.26100
+14 verbose os Windows_NT 10.0.26200
 15 verbose node v22.19.0
 16 verbose npm  v11.6.1
 17 verbose exit 2
