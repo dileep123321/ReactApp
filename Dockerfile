@@ -1,23 +1,23 @@
-# Use an official Node runtime as a parent image
-FROM node:16
+# Use a lightweight Node.js image
+FROM node:20-alpine
 
-# Set the working directory to /app
+# Set working directory
 WORKDIR /app
 
-# Copy the package.json and package-lock.json to the working directory
-COPY ./package*.json ./
+# Copy dependency files
+COPY package*.json ./
 
-# Install the dependencies
-RUN npm install
+# Install dependencies (faster & reliable)
+RUN npm ci
 
-# Copy the remaining application files to the working directory
+# Copy app source
 COPY . .
 
-# Build the application
+# Build the React app
 RUN npm run build
 
-# Expose port 3000 for the application
+# Expose app port
 EXPOSE 3000
 
-# Start the application
-CMD [ "npm", "run", "start" ]
+# Start the app
+CMD ["npm", "start"]
