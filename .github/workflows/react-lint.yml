@@ -15,13 +15,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug repository structure
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Files and folders recursively:"
-          ls -R
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -47,7 +40,6 @@ jobs:
       - name: Ensure ESLint config exists
         run: |
           if [ ! -f ".eslintrc.js" ]; then
-            echo "No ESLint config found. Creating fallback .eslintrc.js..."
             cat > .eslintrc.js <<'EOF'
 module.exports = {
   env: { browser: true, es2021: true },
@@ -59,10 +51,8 @@ module.exports = {
 EOF
           fi
 
-      - name: Run ESLint
-        run: |
-          echo "Running ESLint on $SRC_DIR..."
-          npx eslint $SRC_DIR --ext .js,.jsx,.ts,.tsx || true
+      - name: Run ESLint (warnings won’t fail workflow)
+        run: npx eslint $SRC_DIR --ext .js,.jsx,.ts,.tsx || true
 
   trivy-scan:
     name: Scan Docker Image with Trivy
@@ -75,18 +65,6 @@ EOF
 
       - name: Build Docker image
         run: docker build -t reactapp:latest .
-
-      - name: Run container test
-        run: docker run --rm reactapp:latest || echo "Container exited (normal if no long-running process)"
-
-      - name: Scan filesystem with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: fs
-          scan-path: .
-          format: table
-          exit-code: 0
-          ignore-unfixed: true
 
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
